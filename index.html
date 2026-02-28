@@ -129,7 +129,37 @@ Hãy hỏi tôi về UNCLOS, EEZ, lãnh hải hoặc phán quyết 2016.
 </div>
 
 <script>
+<script>
+function normalizeText(str){
+return str.toLowerCase()
+.normalize("NFD")
+.replace(/[\u0300-\u036f]/g,"");
+}
+
 function chatbotResponse(question){
+
+let q = normalizeText(question);
+
+if(q.includes("unc")){
+return "UNCLOS 1982 là Công ước Liên Hợp Quốc về Luật Biển, thiết lập lãnh hải 12 hải lý và EEZ 200 hải lý.";
+}
+else if(q.includes("lanh hai")){
+return "Lãnh hải là vùng biển rộng tối đa 12 hải lý tính từ đường cơ sở. Quốc gia có chủ quyền hoàn toàn tại đây nhưng phải cho phép tàu nước ngoài qua lại vô hại.";
+}
+else if(q.includes("eez")){
+return "Vùng đặc quyền kinh tế (EEZ) rộng tối đa 200 hải lý. Quốc gia có quyền khai thác tài nguyên nhưng không có chủ quyền hoàn toàn.";
+}
+else if(q.includes("them luc dia")){
+return "Thềm lục địa là phần đáy biển kéo dài tự nhiên từ đất liền ra biển. Quốc gia có quyền khai thác tài nguyên dưới đáy biển.";
+}
+else if(q.includes("2016")){
+return "Phán quyết 2016 tuyên bố đường chín đoạn không có cơ sở pháp lý theo UNCLOS.";
+}
+else{
+return "🌊 Tôi chưa hiểu rõ câu hỏi. Hãy hỏi về lãnh hải, EEZ, UNCLOS hoặc phán quyết 2016 nhé.";
+}
+}
+</script>
 question = question.toLowerCase();
 
 if(question.includes("unc")){
