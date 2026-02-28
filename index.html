@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AI Luật Biển Đảo</title>
+
+<style>
+body{
+background:#343541;
+font-family:Arial, sans-serif;
+margin:0;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.chat-wrapper{
+width:100%;
+max-width:650px;
+height:100vh;
+background:#444654;
+display:flex;
+flex-direction:column;
+}
+
+.header{
+background:#202123;
+color:white;
+padding:15px;
+display:flex;
+align-items:center;
+}
+
+.mascot{
+width:50px;
+margin-right:12px;
+animation:float 2.5s infinite ease-in-out;
+}
+
+@keyframes float{
+0%{transform:translateY(0px);}
+50%{transform:translateY(-6px);}
+100%{transform:translateY(0px);}
+}
+
+.chat-box{
+flex:1;
+overflow-y:auto;
+padding:20px;
+display:flex;
+flex-direction:column;
+}
+
+.message{
+margin:10px 0;
+padding:12px;
+border-radius:12px;
+max-width:80%;
+line-height:1.4;
+}
+
+.user{
+background:#19c37d;
+align-self:flex-end;
+color:white;
+}
+
+.bot{
+background:#3e3f4b;
+align-self:flex-start;
+color:white;
+}
+
+.typing{
+font-style:italic;
+opacity:0.7;
+}
+
+.input-area{
+display:flex;
+padding:15px;
+background:#202123;
+}
+
+input{
+flex:1;
+padding:12px;
+border-radius:8px;
+border:none;
+font-size:15px;
+}
+
+button{
+margin-left:10px;
+padding:12px 16px;
+background:#19c37d;
+border:none;
+border-radius:8px;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="chat-wrapper">
+
+<div class="header">
+<img class="mascot" src="https://cdn-icons-png.flaticon.com/512/616/616494.png">
+<div>
+<b>AI Luật Biển Đảo 🌊</b><br>
+<small>Người bảo vệ Đại dương</small>
+</div>
+</div>
+
+<div id="chat-box" class="chat-box">
+<div class="message bot">
+🌊 Xin chào! Tôi là AI Luật Biển Đảo.<br>
+Hãy hỏi tôi về UNCLOS, EEZ, lãnh hải hoặc phán quyết 2016.
+</div>
+</div>
+
+<div class="input-area">
+<input type="text" id="user-input" placeholder="Nhập câu hỏi...">
+<button onclick="sendMessage()">Gửi</button>
+</div>
+
+</div>
+
+<script>
+function chatbotResponse(question){
+question = question.toLowerCase();
+
+if(question.includes("unc")){
+return "UNCLOS 1982 là Công ước Liên Hợp Quốc về Luật Biển, thiết lập lãnh hải 12 hải lý và EEZ 200 hải lý.";
+}
+else if(question.includes("lãnh hải")){
+return "Lãnh hải rộng tối đa 12 hải lý. Quốc gia có chủ quyền hoàn toàn nhưng phải cho phép qua lại vô hại.";
+}
+else if(question.includes("eez")){
+return "EEZ rộng 200 hải lý. Quốc gia có quyền khai thác tài nguyên nhưng không có chủ quyền hoàn toàn.";
+}
+else if(question.includes("thềm lục địa")){
+return "Thềm lục địa là phần đáy biển kéo dài tự nhiên từ đất liền.";
+}
+else if(question.includes("2016")){
+return "Phán quyết 2016 tuyên bố đường chín đoạn không có cơ sở pháp lý theo UNCLOS.";
+}
+else{
+return "🌊 Tôi chưa hiểu rõ câu hỏi. Hãy hỏi về UNCLOS, EEZ hoặc lãnh hải nhé.";
+}
+}
+
+function sendMessage(){
+const input = document.getElementById("user-input");
+const chatBox = document.getElementById("chat-box");
+
+if(input.value.trim()==="") return;
+
+let userMsg = document.createElement("div");
+userMsg.className="message user";
+userMsg.innerText=input.value;
+chatBox.appendChild(userMsg);
+
+let typing=document.createElement("div");
+typing.className="message bot typing";
+typing.innerText="AI đang phân tích luật biển...";
+chatBox.appendChild(typing);
+
+chatBox.scrollTop=chatBox.scrollHeight;
+
+setTimeout(()=>{
+chatBox.removeChild(typing);
+
+let botMsg=document.createElement("div");
+botMsg.className="message bot";
+botMsg.innerText="🌊 "+chatbotResponse(input.value);
+chatBox.appendChild(botMsg);
+
+chatBox.scrollTop=chatBox.scrollHeight;
+},1000);
+
+input.value="";
+}
+</script>
+
+</body>
+</html>
