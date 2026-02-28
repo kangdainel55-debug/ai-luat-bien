@@ -2,26 +2,24 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>AI Luật Biển Đảo</title>
+<title>AI Luật Biển Pro</title>
 
 <style>
 body{
+margin:0;
 background:#343541;
 font-family:Arial, sans-serif;
-margin:0;
 display:flex;
 justify-content:center;
-align-items:center;
-height:100vh;
 }
 
-.chat-wrapper{
+.app{
 width:100%;
-max-width:650px;
+max-width:800px;
 height:100vh;
-background:#444654;
 display:flex;
 flex-direction:column;
+background:#444654;
 }
 
 .header{
@@ -33,18 +31,18 @@ align-items:center;
 }
 
 .mascot{
-width:50px;
+width:55px;
 margin-right:12px;
-animation:float 2.5s infinite ease-in-out;
+animation:float 3s infinite ease-in-out;
 }
 
 @keyframes float{
-0%{transform:translateY(0px);}
-50%{transform:translateY(-6px);}
-100%{transform:translateY(0px);}
+0%{transform:translateY(0);}
+50%{transform:translateY(-8px);}
+100%{transform:translateY(0);}
 }
 
-.chat-box{
+.chat{
 flex:1;
 overflow-y:auto;
 padding:20px;
@@ -52,12 +50,13 @@ display:flex;
 flex-direction:column;
 }
 
-.message{
+.msg{
 margin:10px 0;
-padding:12px;
-border-radius:12px;
+padding:14px;
+border-radius:14px;
 max-width:80%;
-line-height:1.4;
+line-height:1.5;
+white-space:pre-line;
 }
 
 .user{
@@ -68,16 +67,10 @@ color:white;
 
 .bot{
 background:#3e3f4b;
-align-self:flex-start;
 color:white;
 }
 
-.typing{
-font-style:italic;
-opacity:0.7;
-}
-
-.input-area{
+.input-box{
 display:flex;
 padding:15px;
 background:#202123;
@@ -85,7 +78,7 @@ background:#202123;
 
 input{
 flex:1;
-padding:12px;
+padding:14px;
 border-radius:8px;
 border:none;
 font-size:15px;
@@ -93,126 +86,129 @@ font-size:15px;
 
 button{
 margin-left:10px;
-padding:12px 16px;
+padding:14px 18px;
 background:#19c37d;
 border:none;
 border-radius:8px;
 font-weight:bold;
+}
+
+.suggestions{
+padding:10px 20px;
+background:#444654;
+color:#ccc;
+font-size:13px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="chat-wrapper">
+<div class="app">
 
 <div class="header">
 <img class="mascot" src="https://cdn-icons-png.flaticon.com/512/616/616494.png">
 <div>
 <b>AI Luật Biển Đảo 🌊</b><br>
-<small>Người bảo vệ Đại dương</small>
+<small>Trợ lý pháp lý đại dương</small>
 </div>
 </div>
 
-<div id="chat-box" class="chat-box">
-<div class="message bot">
-🌊 Xin chào! Tôi là AI Luật Biển Đảo.<br>
-Hãy hỏi tôi về UNCLOS, EEZ, lãnh hải hoặc phán quyết 2016.
-</div>
+<div id="chat" class="chat"></div>
+
+<div class="suggestions">
+Gợi ý: "Lãnh hải là gì?" | "So sánh lãnh hải và EEZ" | "UNCLOS quy định gì?"
 </div>
 
-<div class="input-area">
-<input type="text" id="user-input" placeholder="Nhập câu hỏi...">
-<button onclick="sendMessage()">Gửi</button>
+<div class="input-box">
+<input type="text" id="input" placeholder="Nhập câu hỏi...">
+<button onclick="send()">Gửi</button>
 </div>
 
 </div>
 
 <script>
-<script>
-function normalizeText(str){
+
+// ===== Chuẩn hóa tiếng Việt =====
+function normalize(str){
 return str.toLowerCase()
 .normalize("NFD")
 .replace(/[\u0300-\u036f]/g,"");
 }
 
-function chatbotResponse(question){
+// ===== Kiến thức =====
+function knowledge(q){
 
-let q = normalizeText(question);
+if(q.includes("lanh hai")){
+return "📘 LÃNH HẢI\n\n- Rộng tối đa 12 hải lý.\n- Quốc gia có chủ quyền hoàn toàn.\n- Phải cho phép tàu nước ngoài qua lại vô hại.";
+}
+
+if(q.includes("eez")){
+return "📘 VÙNG ĐẶC QUYỀN KINH TẾ (EEZ)\n\n- Rộng tối đa 200 hải lý.\n- Quốc gia có quyền khai thác tài nguyên.\n- Không có chủ quyền hoàn toàn như lãnh hải.";
+}
+
+if(q.includes("so sanh")){
+return "📊 SO SÁNH\n\nLãnh hải: 12 hải lý – Chủ quyền hoàn toàn.\nEEZ: 200 hải lý – Quyền khai thác tài nguyên.\n\n=> Lãnh hải có mức độ chủ quyền cao hơn.";
+}
 
 if(q.includes("unc")){
-return "UNCLOS 1982 là Công ước Liên Hợp Quốc về Luật Biển, thiết lập lãnh hải 12 hải lý và EEZ 200 hải lý.";
-}
-else if(q.includes("lanh hai")){
-return "Lãnh hải là vùng biển rộng tối đa 12 hải lý tính từ đường cơ sở. Quốc gia có chủ quyền hoàn toàn tại đây nhưng phải cho phép tàu nước ngoài qua lại vô hại.";
-}
-else if(q.includes("eez")){
-return "Vùng đặc quyền kinh tế (EEZ) rộng tối đa 200 hải lý. Quốc gia có quyền khai thác tài nguyên nhưng không có chủ quyền hoàn toàn.";
-}
-else if(q.includes("them luc dia")){
-return "Thềm lục địa là phần đáy biển kéo dài tự nhiên từ đất liền ra biển. Quốc gia có quyền khai thác tài nguyên dưới đáy biển.";
-}
-else if(q.includes("2016")){
-return "Phán quyết 2016 tuyên bố đường chín đoạn không có cơ sở pháp lý theo UNCLOS.";
-}
-else{
-return "🌊 Tôi chưa hiểu rõ câu hỏi. Hãy hỏi về lãnh hải, EEZ, UNCLOS hoặc phán quyết 2016 nhé.";
-}
-}
-</script>
-question = question.toLowerCase();
-
-if(question.includes("unc")){
-return "UNCLOS 1982 là Công ước Liên Hợp Quốc về Luật Biển, thiết lập lãnh hải 12 hải lý và EEZ 200 hải lý.";
-}
-else if(question.includes("lãnh hải")){
-return "Lãnh hải rộng tối đa 12 hải lý. Quốc gia có chủ quyền hoàn toàn nhưng phải cho phép qua lại vô hại.";
-}
-else if(question.includes("eez")){
-return "EEZ rộng 200 hải lý. Quốc gia có quyền khai thác tài nguyên nhưng không có chủ quyền hoàn toàn.";
-}
-else if(question.includes("thềm lục địa")){
-return "Thềm lục địa là phần đáy biển kéo dài tự nhiên từ đất liền.";
-}
-else if(question.includes("2016")){
-return "Phán quyết 2016 tuyên bố đường chín đoạn không có cơ sở pháp lý theo UNCLOS.";
-}
-else{
-return "🌊 Tôi chưa hiểu rõ câu hỏi. Hãy hỏi về UNCLOS, EEZ hoặc lãnh hải nhé.";
-}
+return "🌍 UNCLOS 1982\n\n- Được gọi là 'Hiến pháp của Đại dương'.\n- Quy định lãnh hải 12 hải lý.\n- EEZ 200 hải lý.\n- Quyền đối với thềm lục địa.";
 }
 
-function sendMessage(){
-const input = document.getElementById("user-input");
-const chatBox = document.getElementById("chat-box");
+if(q.includes("them luc dia")){
+return "📘 THỀM LỤC ĐỊA\n\n- Phần đáy biển kéo dài tự nhiên từ đất liền.\n- Quốc gia có quyền khai thác tài nguyên dưới đáy biển.";
+}
+
+return "🌊 Tôi có thể giải thích về lãnh hải, EEZ, UNCLOS hoặc so sánh các vùng biển.";
+}
+
+// ===== Hiệu ứng gõ chữ =====
+function typeEffect(text, element){
+let i=0;
+let speed=20;
+let timer=setInterval(()=>{
+element.innerHTML+=text.charAt(i);
+i++;
+if(i>=text.length) clearInterval(timer);
+},speed);
+}
+
+// ===== Gửi tin nhắn =====
+function send(){
+let input=document.getElementById("input");
+let chat=document.getElementById("chat");
 
 if(input.value.trim()==="") return;
 
-let userMsg = document.createElement("div");
-userMsg.className="message user";
+let userMsg=document.createElement("div");
+userMsg.className="msg user";
 userMsg.innerText=input.value;
-chatBox.appendChild(userMsg);
-
-let typing=document.createElement("div");
-typing.className="message bot typing";
-typing.innerText="AI đang phân tích luật biển...";
-chatBox.appendChild(typing);
-
-chatBox.scrollTop=chatBox.scrollHeight;
-
-setTimeout(()=>{
-chatBox.removeChild(typing);
+chat.appendChild(userMsg);
 
 let botMsg=document.createElement("div");
-botMsg.className="message bot";
-botMsg.innerText="🌊 "+chatbotResponse(input.value);
-chatBox.appendChild(botMsg);
+botMsg.className="msg bot";
+chat.appendChild(botMsg);
 
-chatBox.scrollTop=chatBox.scrollHeight;
-},1000);
+let answer=knowledge(normalize(input.value));
+typeEffect(answer,botMsg);
+
+chat.scrollTop=chat.scrollHeight;
+
+// lưu lịch sử
+localStorage.setItem("chatHistory",chat.innerHTML);
 
 input.value="";
 }
+
+// ===== Load lịch sử =====
+window.onload=function(){
+let chat=document.getElementById("chat");
+let saved=localStorage.getItem("chatHistory");
+if(saved){
+chat.innerHTML=saved;
+}
+}
+
 </script>
 
 </body>
